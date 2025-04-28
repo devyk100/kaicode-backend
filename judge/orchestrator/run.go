@@ -11,8 +11,8 @@ import (
 func (o *Orchestrator) Run() {
 	// exit gracefully
 	defer func() {
-		for _, val := range o.Workers {
-			val.Exit()
+		for _, workerTemp := range o.Workers {
+			workerTemp.Exit()
 		}
 	}()
 
@@ -81,5 +81,4 @@ func (o *Orchestrator) mainLoop() {
 			break
 		}
 	}
-
 }

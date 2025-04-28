@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/gorilla/websocket"
 )
 
 var SECRET_KEY = []byte("your-very-long-random-secret")
@@ -33,27 +32,27 @@ func ParseToken(tokenString string) (int64, error) {
 	return -1, fmt.Errorf("invalid token")
 }
 
-func HandleWSAuth(conn *websocket.Conn) (int64, error) {
+func HandleWSAuth(conn *SecureWSConn) (int64, string, error) {
 	_, msg, err := conn.ReadMessage()
 	if err != nil {
 		fmt.Println("Client disconnected")
-		return -1, err
+		return -1, "", err
 	}
 	var ReceivedAuthMessage Event
 	err = json.Unmarshal(msg, &ReceivedAuthMessage)
 	if err != nil {
 		fmt.Println("Error unmarshalling message:", err)
-		return -1, err
+		return -1, "", err
 	}
 	if ReceivedAuthMessage.Event == "auth" {
 		fmt.Println("Received auth message")
 	} else {
-		return 0, fmt.Errorf("invalid event")
+		return 0, "", fmt.Errorf("invalid event")
 	}
 	userId, err := ParseToken(ReceivedAuthMessage.Token)
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	}
 	fmt.Println("Was authorized using", userId, "user", userId)
-	return userId, nil
+	return userId, ReceivedAuthMessage.RoomName, nil
 }

@@ -8,9 +8,10 @@ import (
 
 func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 	fmt.Printf("Running job for key %s\n", key)
+	fmt.Println(job.RoomName, "is the room Name")
 	testcaseInput := job.Input
 
-	// compile and filecreation setup for all the languages
+	// compile and file creation setup for all the languages
 	var filename string
 	var compileOut string
 	var err error
@@ -41,6 +42,7 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 			Output:       compileOut,
 			TimeTaken:    0,
 			SQSKey:       key,
+			RoomName:     job.RoomName,
 		}
 	}
 
@@ -63,6 +65,7 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 		return types.FinishedPayload{
 			SubmissionId: job.SubmissionId,
 			Output:       "invalid language",
+			RoomName:     job.RoomName,
 		}
 	}
 
@@ -74,6 +77,7 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 			Output:       "Your code took too long to execute",
 			TimeTaken:    0,
 			SQSKey:       key,
+			RoomName:     job.RoomName,
 		}
 	case outputString = <-outputChan:
 	}
@@ -89,5 +93,6 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 		Output:       outputString,
 		TimeTaken:    int32(since.Milliseconds()),
 		SQSKey:       key,
+		RoomName:     job.RoomName,
 	}
 }
