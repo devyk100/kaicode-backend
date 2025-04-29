@@ -70,7 +70,7 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 	}
 
 	select {
-	case <-time.After(1 * time.Minute):
+	case <-time.After(3 * time.Minute):
 		w.dockerContainer.RestartContainer()
 		return types.FinishedPayload{
 			SubmissionId: job.SubmissionId,

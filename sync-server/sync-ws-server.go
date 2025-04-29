@@ -5,8 +5,11 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/redis/go-redis/v9"
+	"kc-backend/sync-server/db"
 	"kc-backend/sync-server/sqs"
 	"net/http"
 	"os"
@@ -15,12 +18,13 @@ import (
 )
 
 type Event struct {
-	Event    string `json:"event"`     // sync, language, judge, auth
-	Content  string `json:"content"`   // if sync
-	Language string `json:"language"`  // if the language update
-	Token    string `json:"token"`     // if token
-	Input    string `json:"input"`     // input in the case this is a judge event
-	RoomName string `json:"room_name"` // at the time of auth itself
+	Event     string `json:"event"`     // sync, language, judge, auth, output (to the frontend)
+	Content   string `json:"content"`   // if sync
+	Language  string `json:"language"`  // if the language update
+	Token     string `json:"token"`     // if token
+	Input     string `json:"input"`     // input in the case this is a judge event
+	RoomName  string `json:"room_name"` // at the time of auth itself
+	TimeTaken int64  `json:"time_taken"`
 }
 
 type Job struct {
@@ -55,6 +59,11 @@ func InitSyncServer() *SyncServer {
 		TLSConfig: &tls.Config{},
 		DB:        0,
 	})
+	err := db.InitDb(context.Background())
+	if err != nil {
+		fmt.Printf("Init db err: %v\n", err)
+		return nil
+	}
 	syncServer := &SyncServer{
 		RedisClient: rdb,
 		Upgrader: websocket.Upgrader{
@@ -67,7 +76,7 @@ func InitSyncServer() *SyncServer {
 	return syncServer
 }
 
-var PERSIST_DEBOUNCE_INTERVAL = 10 * time.Minute
+var PERSIST_DEBOUNCE_INTERVAL = 1 * time.Minute
 
 func (s *SyncServer) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.Upgrader.Upgrade(w, r, nil)
@@ -111,6 +120,7 @@ func (s *SyncServer) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			err = sqs.SendMessage(string(val), roomName)
+			fmt.Println("SENT THE MESSAGE TO SQS")
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -125,6 +135,19 @@ func (s *SyncServer) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			s.DelayedPersistRoutine[roomName] = time.AfterFunc(PERSIST_DEBOUNCE_INTERVAL, func() {
 				// DB persist logic
 				fmt.Println("Performing DB persistence", "for the room", roomName)
+				parsedUUID, err := uuid.Parse(roomName)
+				if err != nil {
+					fmt.Println(err.Error())
+				}
+
+				var pgUUID pgtype.UUID
+				pgUUID.Bytes = parsedUUID
+				pgUUID.Valid = true
+
+				err = db.DBQueries.UpdateSessionContent(context.Background(), db.UpdateSessionContentParams{
+					ID:      pgUUID,
+					Content: []byte(ReceivedMessage.Content),
+				})
 
 				delete(s.DelayedPersistRoutine, roomName)
 			})

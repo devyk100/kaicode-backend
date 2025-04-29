@@ -15,7 +15,6 @@ func (o *Orchestrator) Run() {
 			workerTemp.Exit()
 		}
 	}()
-
 	for {
 		o.mainLoop()
 	}
@@ -28,7 +27,7 @@ func (o *Orchestrator) mainLoop() {
 		return
 	}
 	if len(message) == 0 {
-		fmt.Println("mainLoop(): Message is empty.")
+		//fmt.Println("mainLoop(): Message is empty.")
 		return
 	}
 
