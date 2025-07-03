@@ -21,6 +21,8 @@ func (o *Orchestrator) Run() {
 	}
 }
 
+var NO_OF_MAX_WORKERS = 10
+
 func (o *Orchestrator) mainLoop() {
 	message, err := sqs.ReceiveMessage()
 	if err != nil {
@@ -51,7 +53,7 @@ func (o *Orchestrator) mainLoop() {
 
 	for {
 		// scale up the number of workers
-		if len(o.pendingJobs.Jobs) > JOBS_PER_WORKER*len(o.Workers) {
+		if (len(o.pendingJobs.Jobs) > JOBS_PER_WORKER*len(o.Workers)) && (NO_OF_MAX_WORKERS >= len(o.Workers)) {
 			// scale up
 			workerTemp := worker.Worker{}
 			o.workerMutex.Lock()
