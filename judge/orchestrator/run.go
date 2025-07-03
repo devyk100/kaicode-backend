@@ -21,7 +21,7 @@ func (o *Orchestrator) Run() {
 	}
 }
 
-var NO_OF_MAX_WORKERS = 10
+var NO_OF_MAX_WORKERS = 2
 
 func (o *Orchestrator) mainLoop() {
 	message, err := sqs.ReceiveMessage()
