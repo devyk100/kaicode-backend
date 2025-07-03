@@ -6,6 +6,7 @@ import (
 	"kc-backend/judge/sqs"
 	"kc-backend/judge/types"
 	"kc-backend/judge/worker"
+	"time"
 )
 
 func (o *Orchestrator) Run() {
@@ -80,4 +81,7 @@ func (o *Orchestrator) mainLoop() {
 			break
 		}
 	}
+
+	// this seemingly reduces a lot of the CPU load and frees it i suppose
+	time.Sleep(time.Second)
 }
