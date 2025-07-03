@@ -14,7 +14,7 @@ EOF
 
 	_, err := w.dockerContainer.ExecInContainer(createFileCmd)
 	if err != nil {
-		fmt.Println("Create Java file error:", err.Error())
+		// fmt.Println("Create Java file error:", err.Error())
 	}
 	return javaFileName
 }
@@ -22,7 +22,7 @@ EOF
 func (w *Worker) compileJava(filename string) (string, error) {
 	compileCmd := fmt.Sprintf("javac %s", filename)
 	compileOutput, err := w.dockerContainer.ExecInContainer(compileCmd)
-	fmt.Println(compileOutput)
+	// fmt.Println(compileOutput)
 	if compileOutput != "" {
 		err = fmt.Errorf("compile error")
 	}

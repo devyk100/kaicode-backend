@@ -3,10 +3,10 @@ package worker
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
-	"github.com/redis/go-redis/v9"
 	"kc-backend/judge/state"
 	"os"
+
+	"github.com/redis/go-redis/v9"
 )
 
 // Start Starts the worker, basically starts the docker container that will be used
@@ -23,7 +23,7 @@ func (w *Worker) Start(ctx context.Context, pendingJobs *state.PendingJobs_t) er
 	w.RedisClient = rdb
 	err := w.dockerContainer.StartContainer(ctx)
 	if err != nil {
-		fmt.Println(err.Error())
+		// fmt.Println(err.Error())
 		return err
 	}
 	return nil

@@ -2,13 +2,13 @@ package sqs
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"os"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"log"
-	"os"
 )
 
 var SQSClient *sqs.Client
@@ -31,6 +31,6 @@ func InitSQSClient() {
 	SQSClient = client
 	SQSQueueURL = os.Getenv("SQS_QUEUE_URL")
 	if SQSQueueURL == "" {
-		fmt.Println("SQS_QUEUE_URL is not set!")
+		// fmt.Println("SQS_QUEUE_URL is not set!")
 	}
 }

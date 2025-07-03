@@ -2,7 +2,6 @@ package orchestrator
 
 import (
 	"encoding/json"
-	"fmt"
 	"kc-backend/judge/sqs"
 	"kc-backend/judge/types"
 	"kc-backend/judge/worker"
@@ -26,7 +25,7 @@ var NO_OF_MAX_WORKERS = 2
 func (o *Orchestrator) mainLoop() {
 	message, err := sqs.ReceiveMessage()
 	if err != nil {
-		fmt.Println("mainLoop(): ", err.Error())
+		// fmt.Println("mainLoop(): ", err.Error())
 		return
 	}
 	if len(message) == 0 {
@@ -36,13 +35,13 @@ func (o *Orchestrator) mainLoop() {
 
 	for _, message := range message {
 
-		fmt.Println("mainLoop(): Message received", *message.Body, "the receipt handle of this message is", *message.ReceiptHandle)
+		// fmt.Println("mainLoop(): Message received", *message.Body, "the receipt handle of this message is", *message.ReceiptHandle)
 
 		var job types.Job
 
 		err = json.Unmarshal([]byte(*message.Body), &job)
 		if err != nil {
-			fmt.Println("mainLoop(): Error unmarshalling message", err.Error())
+			// fmt.Println("mainLoop(): Error unmarshalling message", err.Error())
 			return
 		}
 
@@ -60,7 +59,7 @@ func (o *Orchestrator) mainLoop() {
 			o.Workers = append(o.Workers, workerTemp)
 			err := workerTemp.Start(o.ctx, o.pendingJobs)
 			if err != nil {
-				fmt.Println("mainLoop(): Error starting worker", err.Error())
+				// fmt.Println("mainLoop(): Error starting worker", err.Error())
 				return
 			}
 			go workerTemp.Run()

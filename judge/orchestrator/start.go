@@ -2,7 +2,6 @@ package orchestrator
 
 import (
 	"context"
-	"fmt"
 	"kc-backend/judge/sqs"
 	"kc-backend/judge/state"
 )
@@ -13,6 +12,6 @@ func (o *Orchestrator) Start(ctx context.Context, pendingJobRef *state.PendingJo
 	sqs.InitSQSClient()
 	o.pendingJobs = pendingJobRef
 	if o.pendingJobs == nil {
-		fmt.Println("The pending Jobs reference passed was nil, make sure the memory was handled properly")
+		// fmt.Println("The pending Jobs reference passed was nil, make sure the memory was handled properly")
 	}
 }

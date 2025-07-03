@@ -8,7 +8,7 @@ import (
 
 func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 	fmt.Printf("Running job for key %s\n", key)
-	fmt.Println(job.RoomName, "is the room Name")
+	// fmt.Println(job.RoomName, "is the room Name")
 	testcaseInput := job.Input
 
 	// compile and file creation setup for all the languages
@@ -84,10 +84,10 @@ func (w *Worker) ExecCode(key string, job types.Job) types.FinishedPayload {
 
 	since := time.Since(start)
 
-	fmt.Println("Actual output", outputString)
+	// fmt.Println("Actual output", outputString)
 	outputString = removeNonPrintableChars(outputString)
 
-	fmt.Print("It all executed without any issues!!!")
+	// fmt.Print("It all executed without any issues!!!")
 	return types.FinishedPayload{
 		SubmissionId: job.SubmissionId,
 		Output:       outputString,

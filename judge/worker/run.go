@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"kc-backend/judge/types"
 )
 
@@ -18,12 +17,12 @@ func (w *Worker) mainLoop() {
 	}
 	var finishedPayload types.FinishedPayload
 	if w.pendingJobs == nil {
-		fmt.Println("WARNING: THE POINTER TO THE STATE PENDING JOB IS NIL")
+		// fmt.Println("WARNING: THE POINTER TO THE STATE PENDING JOB IS NIL")
 		return
 	}
 	w.pendingJobs.Mutex.Lock()
 	for k, j := range w.pendingJobs.Jobs {
-		fmt.Printf("Running job %s\n", k)
+		// fmt.Printf("Running job %s\n", k)
 		// exec this code
 		delete(w.pendingJobs.Jobs, k)
 		finishedPayload = w.ExecCode(k, j)
@@ -31,11 +30,11 @@ func (w *Worker) mainLoop() {
 	}
 	w.pendingJobs.Mutex.Unlock()
 
-	fmt.Println("Executed the code, this is it", finishedPayload)
+	// fmt.Println("Executed the code, this is it", finishedPayload)
 
 	err := w.completeJob(finishedPayload)
 	if err != nil {
-		fmt.Println("ERROR: There was an error executing the code", err.Error())
+		// fmt.Println("ERROR: There was an error executing the code", err.Error())
 		return
 	}
 }
