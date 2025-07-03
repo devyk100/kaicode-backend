@@ -8,6 +8,7 @@ import (
 func (w *Worker) Run() {
 	for w.IsRunning {
 		w.mainLoop()
+		time.Sleep(time.Second * 2)
 	}
 }
 
@@ -39,5 +40,4 @@ func (w *Worker) mainLoop() {
 		return
 	}
 
-	time.Sleep(time.Second * 10)
 }
