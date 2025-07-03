@@ -27,3 +27,35 @@ To get started with the Kaicode backend, please refer to the documentation for s
 ## License
 
 [MIT License](LICENSE)
+
+## Deployment steps
+- Build it on the server using `go build . -o kaicode`
+- Make sure it runs
+- After having several issues with Nginx not forwading the headers correctly, and a lot of issues, I just setup caddy with three lines. 
+`sudo nano /etc/caddy/Caddyfile`
+```
+kc-be.yashk.dev {
+        reverse_proxy localhost:1234
+}
+```
+ and it handled everything well, no seperate commands for ssl, no seperate stuff for websocket, just this.
+- as this is a high level program that runs and orchestrate docker containers itself, its recommended you run this as a daemon, using systemd, i'll give the following example config that I did on my AWS Lightsail instance
+`sudo nano /etc/systemd/system/kaicode.service`
+
+```
+[Unit]
+Description=Kaicode backend
+After=network.target
+
+[Service]
+WorkingDirectory=/home/admin/kaicode-backend
+ExecStart=/home/admin/kaicode-backend/kaicode
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/home/admin/kaicode-backend/.env
+User=admin
+Group=admin
+
+[Install]
+WantedBy=multi-user.target
+```
