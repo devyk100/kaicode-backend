@@ -84,5 +84,5 @@ func (o *Orchestrator) mainLoop() {
 	}
 
 	// this seemingly reduces a lot of the CPU load and frees it i suppose
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 4)
 }

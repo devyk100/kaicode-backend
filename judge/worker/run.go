@@ -39,5 +39,5 @@ func (w *Worker) mainLoop() {
 		return
 	}
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 }
