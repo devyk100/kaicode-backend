@@ -1,1 +1,1 @@
-docker build -t "code-exec-engine"
+docker build . -t "code-exec-engine"
