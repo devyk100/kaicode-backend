@@ -2,6 +2,7 @@ package worker
 
 import (
 	"kc-backend/judge/types"
+	"time"
 )
 
 func (w *Worker) Run() {
@@ -37,4 +38,6 @@ func (w *Worker) mainLoop() {
 		// fmt.Println("ERROR: There was an error executing the code", err.Error())
 		return
 	}
+
+	time.Sleep(time.Second * 2)
 }
